@@ -1,0 +1,131 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --deep-navy: #101C32;
+    --dark-slate: #263449;
+    --secondary-slate: #526174;
+    --ivory: #F4F5F2;
+    --white: #FFFFFF;
+    --border-light: #E2E7ED;
+    --border-dark: #1E2B3E;
+    
+    /* Indian National Tricolour Palette */
+    --flag-saffron: #FF9933;
+    --flag-white: #FFFFFF;
+    --flag-green: #138808;
+    --chakra-navy: #000080;
+  }
+
+  body {
+    color: var(--ivory);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow-x: hidden;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.4);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* Wavy Background Animations */
+@keyframes waveHorizontalForward {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes waveHorizontalBackward {
+  0% {
+    transform: translate3d(-50%, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes waveUndulate1 {
+  0%, 100% {
+    transform: translateY(0) scaleY(1);
+  }
+  50% {
+    transform: translateY(-16px) scaleY(1.12);
+  }
+}
+
+@keyframes waveUndulate2 {
+  0%, 100% {
+    transform: translateY(0) scaleY(1);
+  }
+  50% {
+    transform: translateY(18px) scaleY(1.15);
+  }
+}
+
+@keyframes waveUndulate3 {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-12px) scale(1.06);
+  }
+}
+
+.anim-wave-forward-slow {
+  animation: waveHorizontalForward 24s linear infinite;
+}
+
+.anim-wave-forward-mid {
+  animation: waveHorizontalForward 16s linear infinite;
+}
+
+.anim-wave-backward-slow {
+  animation: waveHorizontalBackward 20s linear infinite;
+}
+
+.anim-wave-backward-mid {
+  animation: waveHorizontalBackward 14s linear infinite;
+}
+
+.anim-wave-undulate-1 {
+  animation: waveUndulate1 9s ease-in-out infinite;
+}
+
+.anim-wave-undulate-2 {
+  animation: waveUndulate2 11s ease-in-out infinite;
+}
+
+.anim-wave-undulate-3 {
+  animation: waveUndulate3 13s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-wave-forward-slow,
+  .anim-wave-forward-mid,
+  .anim-wave-backward-slow,
+  .anim-wave-backward-mid,
+  .anim-wave-undulate-1,
+  .anim-wave-undulate-2,
+  .anim-wave-undulate-3 {
+    animation: none !important;
+  }
+}
