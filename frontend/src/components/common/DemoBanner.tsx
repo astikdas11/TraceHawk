@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertCircle, Database } from 'lucide-react';
+import { Database } from 'lucide-react';
 
 interface DemoBannerProps {
   compact?: boolean;
@@ -20,17 +20,16 @@ export const DemoBanner: React.FC<DemoBannerProps> = ({
   }
 
   return (
-    <div className={`p-2.5 rounded-lg bg-black/60 border border-white/10 backdrop-blur-md text-xs font-mono flex items-center justify-between gap-3 text-slate-300 ${className}`}>
-      <div className="flex items-center gap-2">
-        <Database className="w-3.5 h-3.5 text-[#FF9933] flex-shrink-0" />
-        <span>
-          <strong className="text-white">FRONTEND PREVIEW MODE:</strong> Displaying realistic benchmark indicators. Live machine learning model & threat feed telemetry will populate upon backend connection.
+    <div className={`p-2.5 sm:p-3 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md text-[11px] sm:text-xs font-mono flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 text-slate-300 ${className}`}>
+      <div className="flex items-start sm:items-center gap-2">
+        <Database className="w-3.5 h-3.5 text-[#FF9933] flex-shrink-0 mt-0.5 sm:mt-0" />
+        <span className="leading-relaxed">
+          <strong className="text-white">FRONTEND PREVIEW MODE:</strong> Displaying realistic benchmark indicators. Live ML model & threat feed telemetry will populate upon backend connection.
         </span>
       </div>
-      <span className="text-[10px] px-2 py-0.5 rounded bg-black/80 border border-white/15 text-[#FF9933] font-bold tracking-wider uppercase flex-shrink-0">
+      <span className="self-start sm:self-auto text-[9px] sm:text-[10px] px-2 py-0.5 rounded bg-black/80 border border-white/15 text-[#FF9933] font-bold tracking-wider uppercase flex-shrink-0">
         Demo Telemetry
       </span>
     </div>
   );
 };
-

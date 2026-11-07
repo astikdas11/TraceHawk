@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertTriangle, ShieldCheck, ShieldAlert, XCircle, ArrowUpRight } from 'lucide-react';
+import { AlertTriangle, ShieldCheck, ShieldAlert, XCircle } from 'lucide-react';
 import { ThreatEvidence } from '../../types';
 
 interface ThreatEvidencePanelProps {
@@ -15,7 +15,7 @@ export const ThreatEvidencePanel: React.FC<ThreatEvidencePanelProps> = ({
 }) => {
   if (!evidenceList || evidenceList.length === 0) {
     return (
-      <div className="p-6 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md text-center font-mono text-xs text-slate-500">
+      <div className="p-4 sm:p-6 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md text-center font-mono text-xs text-slate-500">
         No anomalous threat indicators observed for this artifact.
       </div>
     );
@@ -57,12 +57,12 @@ export const ThreatEvidencePanel: React.FC<ThreatEvidencePanelProps> = ({
 
   return (
     <div className={`space-y-3 font-mono text-left ${className}`}>
-      <div className="flex items-center justify-between pb-1">
+      <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-1 pb-1">
         <span className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
-          <ShieldAlert className="w-3.5 h-3.5 text-[#FF9933]" />
+          <ShieldAlert className="w-3.5 h-3.5 text-[#FF9933] flex-shrink-0" />
           <span>{title} ({evidenceList.length})</span>
         </span>
-        <span className="text-[10px] text-slate-500 uppercase">
+        <span className="text-[9px] sm:text-[10px] text-slate-500 uppercase">
           Empirical Observation Only
         </span>
       </div>
@@ -75,18 +75,18 @@ export const ThreatEvidencePanel: React.FC<ThreatEvidencePanelProps> = ({
           return (
             <div
               key={item.id}
-              className={`p-3.5 rounded-lg border text-xs transition-colors ${style.card}`}
+              className={`p-3 sm:p-3.5 rounded-lg border text-xs transition-colors ${style.card}`}
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-1.5">
-                <div className="flex items-center gap-2">
-                  <Icon className={`w-4 h-4 ${style.text} flex-shrink-0`} />
-                  <span className="font-bold text-white tracking-tight">{item.title}</span>
+              <div className="flex flex-col xs:flex-row xs:items-start justify-between gap-1.5 pb-1.5">
+                <div className="flex items-start gap-2">
+                  <Icon className={`w-4 h-4 ${style.text} flex-shrink-0 mt-0.5`} />
+                  <span className="font-bold text-white tracking-tight leading-snug">{item.title}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded border uppercase ${style.badge}`}>
+                <div className="flex items-center gap-1.5 self-start xs:self-auto flex-shrink-0">
+                  <span className={`text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded border uppercase whitespace-nowrap ${style.badge}`}>
                     {item.severity.replace('_', ' ')}
                   </span>
-                  <span className="text-[10px] text-slate-500 px-2 py-0.5 rounded bg-black/40 border border-white/10">
+                  <span className="text-[9px] sm:text-[10px] text-slate-400 px-1.5 sm:px-2 py-0.5 rounded bg-black/40 border border-white/10 whitespace-nowrap">
                     {item.category}
                   </span>
                 </div>
@@ -96,7 +96,7 @@ export const ThreatEvidencePanel: React.FC<ThreatEvidencePanelProps> = ({
                 {item.evidence}
               </p>
 
-              <div className="mt-2.5 pt-2 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-[10px] text-slate-500">
+              <div className="mt-2.5 pt-2 border-t border-white/10 flex flex-col xs:flex-row xs:items-center justify-between gap-1.5 text-[10px] text-slate-500">
                 <span>
                   Source: <strong className="text-slate-400">{item.source}</strong> ({item.confidence})
                 </span>
@@ -113,4 +113,3 @@ export const ThreatEvidencePanel: React.FC<ThreatEvidencePanelProps> = ({
     </div>
   );
 };
-

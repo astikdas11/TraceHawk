@@ -74,24 +74,23 @@ export const RiskBadge: React.FC<RiskBadgeProps> = ({
   const Icon = config.icon;
 
   const sizeClasses = {
-    sm: 'text-[10px] px-2 py-0.5 gap-1',
-    md: 'text-xs px-2.5 py-1 gap-1.5',
-    lg: 'text-sm px-3.5 py-1.5 gap-2 font-bold',
+    sm: 'text-[9px] sm:text-[10px] px-2 py-0.5 gap-1',
+    md: 'text-[11px] sm:text-xs px-2.5 py-1 gap-1.5',
+    lg: 'text-xs sm:text-sm px-2.5 sm:px-3.5 py-1 sm:py-1.5 gap-1.5 sm:gap-2 font-bold',
   };
 
   return (
     <span
-      className={`inline-flex items-center rounded-md font-mono font-medium border uppercase tracking-wider ${config.bg} ${config.text} ${config.border} ${sizeClasses[size]} ${className}`}
+      className={`inline-flex items-center rounded-md font-mono font-medium border uppercase tracking-wider whitespace-nowrap ${config.bg} ${config.text} ${config.border} ${sizeClasses[size]} ${className}`}
     >
-      <span className={`w-1.5 h-1.5 rounded-full ${config.dot}`} />
+      <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${config.dot}`} />
       {showIcon && <Icon className="w-3.5 h-3.5 flex-shrink-0" />}
       <span>{config.label}</span>
       {typeof score === 'number' && (
-        <span className="opacity-80 font-mono text-[11px] ml-0.5">
+        <span className="opacity-80 font-mono text-[10px] sm:text-[11px] ml-0.5">
           ({score}/100)
         </span>
       )}
     </span>
   );
 };
-

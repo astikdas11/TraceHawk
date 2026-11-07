@@ -30,31 +30,31 @@ export const ThreatActivityChart: React.FC<ThreatActivityChartProps> = ({
   className = '',
 }) => {
   return (
-    <div className={`p-5 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md text-left font-mono ${className}`}>
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-white/10">
+    <div className={`p-4 sm:p-5 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md text-left font-mono ${className}`}>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 sm:pb-4 border-b border-white/10">
         <div>
-          <span className="text-[10px] text-slate-500 uppercase tracking-wider block">
+          <span className="text-[9px] sm:text-[10px] text-slate-500 uppercase tracking-wider block">
             TELEMETRY STREAM // 24-HOUR INTERVAL
           </span>
-          <h3 className="text-sm font-bold text-white uppercase tracking-wide">
-            Threat Activity & Investigation Volume
+          <h3 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wide">
+            Threat Activity & Volume
           </h3>
         </div>
-        <div className="flex items-center gap-4 text-xs">
+        <div className="flex items-center flex-wrap gap-2 sm:gap-4 text-[10px] sm:text-xs">
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#FF9933]" />
+            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#FF9933]" />
             <span className="text-slate-400">Total Queries</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
+            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-rose-500" />
             <span className="text-slate-400">Flagged Threats</span>
           </div>
         </div>
       </div>
 
-      <div className="h-64 mt-4 w-full">
+      <div className="h-52 sm:h-64 mt-3 sm:mt-4 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+          <AreaChart data={data} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
             <defs>
               <linearGradient id="saffronGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#FF9933" stopOpacity={0.3} />
@@ -69,22 +69,22 @@ export const ThreatActivityChart: React.FC<ThreatActivityChartProps> = ({
             <XAxis
               dataKey="time"
               stroke="#526174"
-              fontSize={11}
+              fontSize={10}
               tickLine={false}
               axisLine={{ stroke: '#1E2B3E' }}
             />
             <YAxis
               stroke="#526174"
-              fontSize={11}
+              fontSize={10}
               tickLine={false}
               axisLine={false}
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: 'rgba(0,0,0,0.85)',
+                backgroundColor: 'rgba(0,0,0,0.9)',
                 borderColor: 'rgba(255,255,255,0.15)',
                 borderRadius: '8px',
-                fontSize: '12px',
+                fontSize: '11px',
                 fontFamily: 'JetBrains Mono',
                 color: '#F4F5F2',
               }}
@@ -113,4 +113,3 @@ export const ThreatActivityChart: React.FC<ThreatActivityChartProps> = ({
     </div>
   );
 };
-

@@ -1,16 +1,10 @@
 import React from 'react';
 import {
   ShieldAlert,
-  Search,
-  CheckCircle2,
   AlertTriangle,
   ArrowRight,
-  TrendingUp,
   Activity,
-  Layers,
   Database,
-  Lock,
-  ExternalLink
 } from 'lucide-react';
 import { StatCard } from '../../components/common/StatCard';
 import { DemoBanner } from '../../components/common/DemoBanner';
@@ -28,16 +22,16 @@ interface OverviewViewProps {
 
 export const OverviewView: React.FC<OverviewViewProps> = ({ onNavigate }) => {
   return (
-    <div className="space-y-6 text-left font-mono">
+    <div className="space-y-4 sm:space-y-6 text-left font-mono">
       {/* Top Banner Notice */}
       <DemoBanner />
 
-      {/* Primary Statistics Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Primary Statistics Grid: 2 columns on mobile, 4 columns on desktop */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         <StatCard
-          label="Total Investigations"
+          label="Total Audited"
           value="1,060"
-          subtext="+42 queries audited in last 24h"
+          subtext="+42 queries in last 24h"
           icon={Activity}
           accent="saffron"
           badge="Live Index"
@@ -45,23 +39,23 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ onNavigate }) => {
         <StatCard
           label="Suspicious URLs"
           value="210"
-          subtext="Flagged for elevated lexical entropy"
+          subtext="Elevated lexical entropy"
           icon={AlertTriangle}
           accent="amber"
           badge="Elevated"
         />
         <StatCard
-          label="High-Risk & Malicious"
+          label="Active Threats"
           value="230"
-          subtext="Confirmed hostile phishing lures"
+          subtext="Confirmed phishing lures"
           icon={ShieldAlert}
           accent="rose"
-          badge="Active Threats"
+          badge="Hostile"
         />
         <StatCard
-          label="Threat Feed Matches"
+          label="Feed Matches"
           value="342"
-          subtext="Corroborated across 5 global repositories"
+          subtext="Across 5 global repos"
           icon={Database}
           accent="green"
           badge="Multi-Feed"
@@ -69,7 +63,7 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ onNavigate }) => {
       </div>
 
       {/* Main Charts Matrix */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
         {/* Threat Activity Time-Series (7 cols) */}
         <div className="lg:col-span-7">
           <ThreatActivityChart />
@@ -82,49 +76,49 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ onNavigate }) => {
       </div>
 
       {/* Secondary Matrix: Tactic Classification & Threat Intelligence Feeds */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
         {/* Category Breakdown (5 cols) */}
         <div className="lg:col-span-5">
           <ThreatCategoryChart />
         </div>
 
         {/* Threat Intelligence Feed Status (7 cols) */}
-        <div className="lg:col-span-7 p-5 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-3">
+        <div className="lg:col-span-7 p-4 sm:p-5 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-3">
           <div className="flex items-center justify-between pb-2 border-b border-white/10">
             <div>
-              <span className="text-[10px] text-slate-500 uppercase tracking-wider block">
+              <span className="text-[9px] sm:text-[10px] text-slate-500 uppercase tracking-wider block">
                 CORROBORATION SOURCES
               </span>
-              <h3 className="text-sm font-bold text-white uppercase tracking-wide">
-                Threat Intelligence Stream Status
+              <h3 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wide">
+                Threat Intelligence Feeds
               </h3>
             </div>
             <button
               onClick={() => onNavigate('threat-intel')}
               className="text-xs text-[#FF9933] hover:underline flex items-center gap-1 cursor-pointer"
             >
-              <span>View All Feeds</span>
+              <span>View All</span>
               <ArrowRight className="w-3 h-3" />
             </button>
           </div>
 
           <div className="divide-y divide-white/10 text-xs">
             {THREAT_FEED_SOURCES.slice(0, 4).map((source) => (
-              <div key={source.id} className="py-2.5 flex items-center justify-between gap-2">
-                <div className="space-y-0.5">
-                  <div className="flex items-center gap-2">
+              <div key={source.id} className="py-2.5 flex flex-col xs:flex-row xs:items-center justify-between gap-1.5 xs:gap-2">
+                <div className="space-y-0.5 min-w-0">
+                  <div className="flex items-center gap-1.5 flex-wrap">
                     <span className="font-bold text-white tracking-tight">{source.name}</span>
                     <span className="text-[9px] px-1.5 py-0.2 rounded bg-white/10 text-slate-300">
                       {source.provider}
                     </span>
                   </div>
-                  <span className="text-[11px] text-slate-400 font-sans block">{source.category}</span>
+                  <span className="text-[11px] text-slate-400 font-sans block truncate">{source.category}</span>
                 </div>
-                <div className="text-right flex-shrink-0">
-                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950/80 border border-emerald-800 text-emerald-300 block">
+                <div className="flex xs:flex-col items-center xs:items-end justify-between xs:justify-center flex-shrink-0 pt-1 xs:pt-0">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950/80 border border-emerald-800 text-emerald-300">
                     {source.status}
                   </span>
-                  <span className="text-[10px] text-slate-500 block mt-0.5">{source.lastSync}</span>
+                  <span className="text-[10px] text-slate-500 xs:mt-0.5">{source.lastSync}</span>
                 </div>
               </div>
             ))}
@@ -132,14 +126,14 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ onNavigate }) => {
         </div>
       </div>
 
-      {/* Recent Investigation Activity Table */}
-      <div className="p-5 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-3">
+      {/* Recent Investigation Activity */}
+      <div className="p-4 sm:p-5 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-3">
         <div className="flex items-center justify-between pb-2 border-b border-white/10">
           <div>
-            <span className="text-[10px] text-slate-500 uppercase tracking-wider block">
+            <span className="text-[9px] sm:text-[10px] text-slate-500 uppercase tracking-wider block">
               AUDIT LOG // RECENT TELEMETRY
             </span>
-            <h3 className="text-sm font-bold text-white uppercase tracking-wide">
+            <h3 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wide">
               Recent Forensic Investigations
             </h3>
           </div>
@@ -152,7 +146,37 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ onNavigate }) => {
           </button>
         </div>
 
-        <div className="overflow-x-auto">
+        {/* Mobile View: Clean Touch Cards (< sm) */}
+        <div className="sm:hidden space-y-2.5">
+          {SAMPLE_INVESTIGATIONS.map((inv) => (
+            <div
+              key={inv.id}
+              className="p-3 rounded-lg bg-white/5 border border-white/10 space-y-2 text-xs"
+            >
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-white text-[11px]">{inv.id}</span>
+                <span className="px-2 py-0.5 rounded bg-white/10 text-slate-300 text-[9px] font-bold">
+                  {inv.type}
+                </span>
+              </div>
+              <div className="font-mono text-slate-200 text-xs break-all line-clamp-2">
+                {inv.target}
+              </div>
+              <div className="flex items-center justify-between pt-1 border-t border-white/5">
+                <RiskBadge level={inv.riskLevel} score={inv.riskScore} size="sm" />
+                <button
+                  onClick={() => onNavigate('url', inv.target)}
+                  className="px-3 py-1 rounded bg-[#FF9933] text-black font-bold text-[10px] uppercase cursor-pointer active:scale-95 transition-transform"
+                >
+                  Audit
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop / Tablet View: Full Table (sm:) */}
+        <div className="hidden sm:block overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="border-b border-white/10 text-[10px] text-slate-500 uppercase tracking-wider">
@@ -197,4 +221,3 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ onNavigate }) => {
     </div>
   );
 };
-

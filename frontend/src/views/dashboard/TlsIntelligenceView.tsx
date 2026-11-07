@@ -2,15 +2,10 @@ import React, { useState } from 'react';
 import {
   Lock,
   Search,
-  ShieldCheck,
   AlertTriangle,
   CheckCircle2,
-  XCircle,
   Globe,
   Clock,
-  Layers,
-  History,
-  ExternalLink,
   Loader2
 } from 'lucide-react';
 import { DemoBanner } from '../../components/common/DemoBanner';
@@ -24,7 +19,6 @@ interface TlsIntelligenceViewProps {
 
 export const TlsIntelligenceView: React.FC<TlsIntelligenceViewProps> = ({
   initialDomain = 'sbi-kyc-verify-portal.in',
-  onInvestigateUrl,
 }) => {
   const [domainInput, setDomainInput] = useState(initialDomain);
   const [isAuditing, setIsAuditing] = useState(false);
@@ -64,7 +58,7 @@ export const TlsIntelligenceView: React.FC<TlsIntelligenceViewProps> = ({
           sctCount: 2,
           warnings: [
             'Ephemeral certificate: Remaining validity < 30 days (14 days remaining).',
-            'Domain Validation only (DV): Zero organizational or corporate identity verification.',
+            'Domain Validation only (DV): Zero organizational identity verification.',
           ],
         });
       }
@@ -78,19 +72,19 @@ export const TlsIntelligenceView: React.FC<TlsIntelligenceViewProps> = ({
   );
 
   return (
-    <div className="space-y-6 text-left font-mono">
+    <div className="space-y-4 sm:space-y-6 text-left font-mono">
       {/* Module Title */}
-      <div className="p-4 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-1">
+      <div className="p-3.5 sm:p-4 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-1">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-lg bg-white/10 text-[#FF9933] border border-white/15">
+          <div className="p-1.5 rounded-lg bg-white/10 text-[#FF9933] border border-white/15 flex-shrink-0">
             <Lock className="w-4 h-4" />
           </div>
-          <div>
-            <h2 className="text-base font-bold text-white uppercase tracking-wide">
+          <div className="min-w-0">
+            <h2 className="text-xs sm:text-base font-bold text-white uppercase tracking-wide truncate">
               Module 04 // TLS & Digital Certificate Intelligence
             </h2>
-            <p className="text-xs text-slate-400 font-sans">
-              Socket-level X.509 ASN.1 certificate inspection, issuing Certificate Authority auditing, and Certificate Transparency (RFC 6962).
+            <p className="text-[11px] sm:text-xs text-slate-400 font-sans line-clamp-1 sm:line-clamp-none">
+              Socket-level X.509 certificate inspection, CA auditing, and Certificate Transparency.
             </p>
           </div>
         </div>
@@ -99,9 +93,9 @@ export const TlsIntelligenceView: React.FC<TlsIntelligenceViewProps> = ({
       <DemoBanner />
 
       {/* Target Domain Input Card */}
-      <div className="p-5 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-3">
+      <div className="p-4 sm:p-5 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-3">
         <label className="text-xs font-bold text-slate-300 uppercase tracking-wide flex items-center gap-1.5">
-          <Search className="w-3.5 h-3.5 text-[#FF9933]" />
+          <Search className="w-3.5 h-3.5 text-[#FF9933] flex-shrink-0" />
           <span>Inspect Destination TLS Socket:</span>
         </label>
         <div className="flex flex-col sm:flex-row gap-2">
@@ -110,12 +104,12 @@ export const TlsIntelligenceView: React.FC<TlsIntelligenceViewProps> = ({
             value={domainInput}
             onChange={(e) => setDomainInput(e.target.value)}
             placeholder="e.g. onlinesbi.sbi or sbi-kyc-verify-portal.in"
-            className="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/15 text-white text-xs font-mono focus:outline-none focus:border-[#FF9933]"
+            className="flex-1 px-3 py-2.5 sm:py-2 rounded-lg bg-white/5 border border-white/15 text-white text-xs font-mono focus:outline-none focus:border-[#FF9933]"
           />
           <button
             onClick={() => handleAudit()}
             disabled={isAuditing}
-            className="px-6 py-2 rounded-lg bg-[#FF9933] hover:bg-[#e68524] text-black font-bold text-xs uppercase cursor-pointer disabled:opacity-50 transition-colors flex items-center justify-center gap-1.5"
+            className="px-5 py-2.5 sm:py-2 rounded-lg bg-[#FF9933] hover:bg-[#e68524] text-black font-bold text-xs uppercase cursor-pointer disabled:opacity-50 transition-colors flex items-center justify-center gap-1.5 min-h-[44px] sm:min-h-0"
           >
             {isAuditing ? (
               <>
@@ -136,64 +130,64 @@ export const TlsIntelligenceView: React.FC<TlsIntelligenceViewProps> = ({
           <span className="text-[10px] text-slate-500 uppercase mr-1">Presets:</span>
           <button
             onClick={() => handleAudit('sbi-kyc-verify-portal.in')}
-            className="px-2 py-0.5 rounded bg-white/5 hover:bg-white/15 border border-white/10 text-[11px] text-slate-300 hover:text-white"
+            className="px-2.5 py-1 rounded bg-white/5 hover:bg-white/15 border border-white/10 text-[11px] text-slate-300 hover:text-white active:scale-95 transition-transform"
           >
-            sbi-kyc-verify-portal.in (Ephemeral DV Phish)
+            sbi-kyc-verify-portal.in (DV Phish)
           </button>
           <button
             onClick={() => handleAudit('onlinesbi.sbi')}
-            className="px-2 py-0.5 rounded bg-white/5 hover:bg-white/15 border border-white/10 text-[11px] text-slate-300 hover:text-white"
+            className="px-2.5 py-1 rounded bg-white/5 hover:bg-white/15 border border-white/10 text-[11px] text-slate-300 hover:text-white active:scale-95 transition-transform"
           >
-            onlinesbi.sbi (Extended Validation Clean)
+            onlinesbi.sbi (EV Clean)
           </button>
         </div>
       </div>
 
-      {/* Core Certificate Grid */}
+      {/* Core Certificate Grid: 2 cols on mobile, 4 on desktop */}
       {tlsData && (
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-4 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-1.5">
-              <span className="text-[10px] text-slate-500 uppercase block">1. X.509 VALIDITY</span>
-              <span className="text-emerald-400 font-bold text-sm block">ACTIVE & VALID</span>
-              <span className="text-[11px] text-slate-400">{tlsData.domain}</span>
+        <div className="space-y-4 sm:space-y-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+            <div className="p-3 sm:p-4 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-1 min-w-0">
+              <span className="text-[9px] sm:text-[10px] text-slate-500 uppercase block">1. X.509 VALIDITY</span>
+              <span className="text-emerald-400 font-bold text-xs sm:text-sm block">VALID</span>
+              <span className="text-[10px] sm:text-[11px] text-slate-400 truncate block">{tlsData.domain}</span>
             </div>
-            <div className="p-4 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-1.5">
-              <span className="text-[10px] text-slate-500 uppercase block">2. ISSUER VALIDATION</span>
-              <span className={`font-bold text-sm block ${tlsData.validationType === 'EV' ? 'text-emerald-400' : 'text-amber-400'}`}>
-                {tlsData.validationType} ({tlsData.validationType === 'EV' ? 'Extended Validation' : 'Domain Validation'})
+            <div className="p-3 sm:p-4 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-1 min-w-0">
+              <span className="text-[9px] sm:text-[10px] text-slate-500 uppercase block">2. ISSUER TYPE</span>
+              <span className={`font-bold text-xs sm:text-sm block truncate ${tlsData.validationType === 'EV' ? 'text-emerald-400' : 'text-amber-400'}`}>
+                {tlsData.validationType} ({tlsData.validationType === 'EV' ? 'EV' : 'DV'})
               </span>
-              <span className="text-[11px] text-slate-400 truncate block">{tlsData.issuer}</span>
+              <span className="text-[10px] sm:text-[11px] text-slate-400 truncate block">{tlsData.issuer}</span>
             </div>
-            <div className="p-4 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-1.5">
-              <span className="text-[10px] text-slate-500 uppercase block">3. PROTOCOL & CIPHER</span>
-              <span className="text-white font-bold text-sm block">{tlsData.protocol}</span>
-              <span className="text-[11px] text-slate-400 truncate block">{tlsData.cipherSuite}</span>
+            <div className="p-3 sm:p-4 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-1 min-w-0">
+              <span className="text-[9px] sm:text-[10px] text-slate-500 uppercase block">3. PROTOCOL</span>
+              <span className="text-white font-bold text-xs sm:text-sm block truncate">{tlsData.protocol}</span>
+              <span className="text-[10px] sm:text-[11px] text-slate-400 truncate block">{tlsData.cipherSuite}</span>
             </div>
-            <div className="p-4 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-1.5">
-              <span className="text-[10px] text-slate-500 uppercase block">4. KEY STRENGTH</span>
-              <span className="text-emerald-400 font-bold text-sm block">
-                {tlsData.keyStrength} ({tlsData.publicKeyBits}-bit)
+            <div className="p-3 sm:p-4 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-1 min-w-0">
+              <span className="text-[9px] sm:text-[10px] text-slate-500 uppercase block">4. KEY STRENGTH</span>
+              <span className="text-emerald-400 font-bold text-xs sm:text-sm block truncate">
+                {tlsData.keyStrength} ({tlsData.publicKeyBits}b)
               </span>
-              <span className="text-[11px] text-slate-400">{tlsData.signatureAlgorithm}</span>
+              <span className="text-[10px] sm:text-[11px] text-slate-400 truncate block">{tlsData.signatureAlgorithm}</span>
             </div>
           </div>
 
           {/* Expiration Timeline Progress Bar */}
-          <div className="p-5 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-3">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-white/10">
+          <div className="p-4 sm:p-5 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-2.5 sm:space-y-3">
+            <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-1 pb-2 border-b border-white/10">
               <span className="text-xs font-bold text-white uppercase tracking-wider block flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-amber-400" />
-                <span>Certificate Expiration Lifecycle Monitoring</span>
+                <Clock className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                <span>Certificate Expiration Lifecycle</span>
               </span>
-              <div className="text-xs text-slate-400">
-                Expires on: <strong className="text-white">{tlsData.validTo}</strong>
+              <div className="text-[11px] sm:text-xs text-slate-400">
+                Expires: <strong className="text-white">{tlsData.validTo}</strong>
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-400">Elapsed: {percentElapsed}% of lifespan</span>
+              <div className="flex items-center justify-between text-[11px] sm:text-xs">
+                <span className="text-slate-400">Elapsed: {percentElapsed}%</span>
                 <span className={`font-bold ${tlsData.daysRemaining < 30 ? 'text-rose-400' : 'text-emerald-400'}`}>
                   {tlsData.daysRemaining} days remaining
                 </span>
@@ -212,9 +206,9 @@ export const TlsIntelligenceView: React.FC<TlsIntelligenceViewProps> = ({
           {/* Subject Alternative Names & Warnings */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
             {/* SANs */}
-            <div className="p-5 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-2.5">
+            <div className="p-4 sm:p-5 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-2.5">
               <span className="font-bold text-white uppercase tracking-wider block flex items-center gap-1.5">
-                <Globe className="w-3.5 h-3.5 text-blue-400" />
+                <Globe className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" />
                 <span>Subject Alternative Names (SANs)</span>
               </span>
               <div className="p-3 rounded-lg bg-black/40 border border-white/10 space-y-1 max-h-36 overflow-y-auto">
@@ -227,22 +221,22 @@ export const TlsIntelligenceView: React.FC<TlsIntelligenceViewProps> = ({
             </div>
 
             {/* Warnings or Validations */}
-            <div className="p-5 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-2.5">
+            <div className="p-4 sm:p-5 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-2.5">
               <span className="font-bold text-white uppercase tracking-wider block flex items-center gap-1.5">
-                <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+                <AlertTriangle className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
                 <span>Observed Cryptographic Warnings</span>
               </span>
               {tlsData.warnings.length > 0 ? (
                 <div className="space-y-2">
                   {tlsData.warnings.map((w, i) => (
-                    <div key={i} className="p-2.5 rounded bg-amber-950/20 border border-amber-900/60 text-amber-300 text-xs">
+                    <div key={i} className="p-2.5 rounded bg-amber-950/20 border border-amber-900/60 text-amber-300 text-xs leading-snug">
                       {w}
                     </div>
                   ))}
                 </div>
               ) : (
                 <div className="p-4 rounded-lg bg-emerald-950/20 border border-emerald-900/40 text-emerald-300 text-xs flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
                   <span>No cryptographic anomalies or ephemeral risks detected.</span>
                 </div>
               )}
@@ -253,4 +247,3 @@ export const TlsIntelligenceView: React.FC<TlsIntelligenceViewProps> = ({
     </div>
   );
 };
-

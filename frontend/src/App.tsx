@@ -11,8 +11,8 @@ import { ReportsView } from './views/dashboard/ReportsView';
 import { SettingsView } from './views/dashboard/SettingsView';
 import { Sidebar, DashboardViewId } from './components/layout/Sidebar';
 import { DashboardHeader } from './components/layout/DashboardHeader';
+import { MobileBottomNav } from './components/layout/MobileBottomNav';
 import { AnimatedFlagBackground } from './components/brand/AnimatedFlagBackground';
-import { X } from 'lucide-react';
 
 export const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<'landing' | 'dashboard'>('landing');
@@ -111,25 +111,17 @@ export const App: React.FC = () => {
           {isMobileSidebarOpen && (
             <div className="fixed inset-0 z-50 md:hidden flex">
               <div
-                className="fixed inset-0 bg-black/80 backdrop-blur-sm"
+                className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
                 onClick={() => setIsMobileSidebarOpen(false)}
               />
-              <div className="relative w-72 max-w-[80vw] bg-black/90 backdrop-blur-md h-full shadow-2xl flex flex-col z-10 border-r border-white/10">
-                <button
-                  onClick={() => setIsMobileSidebarOpen(false)}
-                  className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-                <div className="p-4 flex-1 overflow-y-auto">
-                  <Sidebar
-                    currentView={currentDashboardView}
-                    onSelectView={(v) => handleNavigateDashboard(v)}
-                    isCollapsed={false}
-                    onToggleCollapse={() => {}}
-                    onBackToLanding={handleBackToLanding}
-                  />
-                </div>
+              <div className="relative w-72 max-w-[85vw] bg-black/95 backdrop-blur-xl h-full shadow-2xl flex flex-col z-10 border-r border-white/10 animate-in slide-in-from-left duration-200">
+                <Sidebar
+                  currentView={currentDashboardView}
+                  onSelectView={(v) => handleNavigateDashboard(v)}
+                  onBackToLanding={handleBackToLanding}
+                  isMobile={true}
+                  onClose={() => setIsMobileSidebarOpen(false)}
+                />
               </div>
             </div>
           )}
@@ -146,7 +138,7 @@ export const App: React.FC = () => {
               onMobileMenuToggle={() => setIsMobileSidebarOpen(true)}
             />
 
-            <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+            <main className="flex-1 p-3 sm:p-6 lg:p-8 pb-24 md:pb-8 max-w-7xl w-full mx-auto">
               {currentDashboardView === 'overview' && (
                 <OverviewView onNavigate={handleNavigateDashboard} />
               )}
@@ -191,21 +183,27 @@ export const App: React.FC = () => {
             </main>
 
             {/* Subdued SOC Footer */}
-            <footer className="py-4 px-6 border-t border-white/10 text-[11px] font-mono text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2 bg-black/50 backdrop-blur-md">
-              <div className="flex items-center gap-2">
+            <footer className="py-4 px-4 sm:px-6 pb-20 md:pb-4 border-t border-white/10 text-[11px] font-mono text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2 bg-black/50 backdrop-blur-md">
+              <div className="flex items-center gap-2 text-center sm:text-left flex-wrap justify-center">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#FF9933]" />
                 <span className="text-slate-400 font-bold">TRACEHAWK // Hawk Shield</span>
                 <span>•</span>
                 <span>Enterprise SOC Workstation</span>
               </div>
-              <div className="text-slate-500 text-[10px]">
+              <div className="text-slate-500 text-[10px] text-center sm:text-right">
                 Rigorous Evidence-Based Cyber Intelligence // No Fabrication
               </div>
             </footer>
+
+            {/* Mobile Bottom Navigation Bar (Phone View) */}
+            <MobileBottomNav
+              currentView={currentDashboardView}
+              onSelectView={(v) => handleNavigateDashboard(v)}
+              onOpenMenu={() => setIsMobileSidebarOpen(true)}
+            />
           </div>
         </div>
       )}
     </div>
   );
 };
-

@@ -1,21 +1,9 @@
 import React, { useState } from 'react';
 import {
   Search,
-  Shield,
-  ShieldAlert,
   AlertTriangle,
-  Lock,
-  Globe2,
-  ExternalLink,
-  ArrowRight,
-  Database,
   Layers,
-  Cpu,
-  CheckCircle2,
-  XCircle,
-  HelpCircle,
-  Clock,
-  RotateCcw,
+  Database,
   Loader2
 } from 'lucide-react';
 import { RiskBadge } from '../../components/common/RiskBadge';
@@ -31,13 +19,12 @@ interface UrlInvestigationViewProps {
 
 export const UrlInvestigationView: React.FC<UrlInvestigationViewProps> = ({
   initialUrl = 'http://sbi-kyc-verify-portal.in',
-  onNavigateToTls,
 }) => {
   const [urlInput, setUrlInput] = useState(initialUrl);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
 
-  // Active investigation result state (Deterministic realistic mock for frontend phase)
+  // Active investigation result state
   const [activeResult, setActiveResult] = useState<{
     id: string;
     url: string;
@@ -86,7 +73,7 @@ export const UrlInvestigationView: React.FC<UrlInvestigationViewProps> = ({
     ],
     evidenceList: SAMPLE_INVESTIGATIONS[0].indicators,
     explanation:
-      'The investigated URL demonstrates empirical markers of deceptive banking impersonation. It targets customers of State Bank of India using an unauthenticated domain. The host presents an ephemeral 14-day Let’s Encrypt certificate and is indexed on URLhaus and PhishTank active phishing feeds.',
+      'The investigated URL demonstrates empirical markers of deceptive banking impersonation. It targets customers of State Bank of India using an unauthenticated domain. The host presents an ephemeral 14-day certificate and is indexed on URLhaus and PhishTank active phishing feeds.',
   });
 
   const validateUrl = (str: string): boolean => {
@@ -107,14 +94,13 @@ export const UrlInvestigationView: React.FC<UrlInvestigationViewProps> = ({
       setIsAnalyzing(false);
 
       if (target.includes('onlinesbi.sbi') || target.includes('sbi.co.in')) {
-        // Legitimate banking preset
         setActiveResult({
           id: 'TH-INV-98215',
           url: target,
           normalisedUrl: 'onlinesbi.sbi',
           domain: 'onlinesbi.sbi',
           ipAddress: '121.240.66.195',
-          asn: 'AS4758 (National Informatics Centre / SBI Sovereign)',
+          asn: 'AS4758 (NIC / Sovereign SBI)',
           country: 'India',
           riskLevel: 'LOW_RISK',
           riskScore: 4,
@@ -133,7 +119,6 @@ export const UrlInvestigationView: React.FC<UrlInvestigationViewProps> = ({
             'Target is verified as the official digital banking infrastructure of State Bank of India. Backed by DigiCert Extended Validation (EV) certificate, sovereign Indian ASN routing, and clean threat intelligence history.',
         });
       } else if (target.includes('electricity') || target.includes('bill')) {
-        // Utility extortion preset
         setActiveResult({
           id: 'TH-INV-98216',
           url: target,
@@ -159,7 +144,6 @@ export const UrlInvestigationView: React.FC<UrlInvestigationViewProps> = ({
             'Domain was registered recently (4 days ago) and is utilized in urgent SMS panic scams claiming imminent electricity disconnection. Hosts an unauthenticated payment phishing form.',
         });
       } else {
-        // Generic suspicious analysis
         const isSecure = target.startsWith('https://');
         setActiveResult({
           id: `TH-INV-${Math.floor(10000 + Math.random() * 90000)}`,
@@ -206,19 +190,19 @@ export const UrlInvestigationView: React.FC<UrlInvestigationViewProps> = ({
   };
 
   return (
-    <div className="space-y-6 text-left font-mono">
+    <div className="space-y-4 sm:space-y-6 text-left font-mono">
       {/* Module Title */}
-      <div className="p-4 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-1">
+      <div className="p-3.5 sm:p-4 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-1">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-lg bg-white/10 text-[#FF9933] border border-white/15">
+          <div className="p-1.5 rounded-lg bg-white/10 text-[#FF9933] border border-white/15 flex-shrink-0">
             <Search className="w-4 h-4" />
           </div>
-          <div>
-            <h2 className="text-base font-bold text-white uppercase tracking-wide">
+          <div className="min-w-0">
+            <h2 className="text-xs sm:text-base font-bold text-white uppercase tracking-wide truncate">
               Module 01 // Intelligent URL & Domain Forensics
             </h2>
-            <p className="text-xs text-slate-400 font-sans">
-              Conducts lexical, DNS, SSL/TLS, and threat-intelligence correlation against submitted digital assets.
+            <p className="text-[11px] sm:text-xs text-slate-400 font-sans line-clamp-1 sm:line-clamp-none">
+              Lexical analysis, DNS resolution, SSL/TLS, and threat-intelligence correlation.
             </p>
           </div>
         </div>
@@ -227,9 +211,9 @@ export const UrlInvestigationView: React.FC<UrlInvestigationViewProps> = ({
       <DemoBanner />
 
       {/* URL Input Form Card */}
-      <div className="p-5 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-4">
+      <div className="p-4 sm:p-5 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-3 sm:space-y-4">
         <div className="space-y-1.5">
-          <label className="text-xs font-bold text-slate-300 uppercase tracking-wide flex items-center justify-between">
+          <label className="text-xs font-bold text-slate-300 uppercase tracking-wide flex flex-col xs:flex-row xs:items-center justify-between gap-1">
             <span>Target URL or Domain to Investigate:</span>
             <span className="text-[10px] text-slate-500 font-normal">HTTP / HTTPS / FQDN</span>
           </label>
@@ -242,150 +226,154 @@ export const UrlInvestigationView: React.FC<UrlInvestigationViewProps> = ({
                 setValidationError(null);
               }}
               placeholder="e.g. http://sbi-kyc-verify-portal.in"
-              className="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/15 text-white text-xs font-mono focus:outline-none focus:border-[#FF9933] transition-colors"
+              className="flex-1 px-3 py-2.5 sm:py-2 rounded-lg bg-white/5 border border-white/15 text-white text-xs font-mono focus:outline-none focus:border-[#FF9933] transition-colors"
             />
-            <button
-              onClick={() => handleAnalyze()}
-              disabled={isAnalyzing}
-              className="px-6 py-2 rounded-lg bg-[#FF9933] hover:bg-[#e68524] text-black font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 transition-colors shadow-md shadow-[#FF9933]/10"
-            >
-              {isAnalyzing ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Auditing...</span>
-                </>
-              ) : (
-                <>
-                  <Search className="w-4 h-4" />
-                  <span>Analyse URL</span>
-                </>
-              )}
-            </button>
-            <button
-              onClick={handleClear}
-              className="px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white text-xs uppercase transition-colors cursor-pointer"
-            >
-              Clear
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => handleAnalyze()}
+                disabled={isAnalyzing}
+                className="flex-1 sm:flex-initial px-5 py-2.5 sm:py-2 rounded-lg bg-[#FF9933] hover:bg-[#e68524] text-black font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 transition-colors shadow-md shadow-[#FF9933]/10"
+              >
+                {isAnalyzing ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Auditing...</span>
+                  </>
+                ) : (
+                  <>
+                    <Search className="w-4 h-4" />
+                    <span>Analyse URL</span>
+                  </>
+                )}
+              </button>
+              <button
+                onClick={handleClear}
+                className="px-3.5 py-2.5 sm:py-2 rounded-lg bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white text-xs uppercase transition-colors cursor-pointer"
+              >
+                Clear
+              </button>
+            </div>
           </div>
           {validationError && (
             <p className="text-rose-400 text-xs mt-1 flex items-center gap-1">
-              <AlertTriangle className="w-3.5 h-3.5" />
+              <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0" />
               <span>{validationError}</span>
             </p>
           )}
         </div>
 
         {/* Quick Benchmark Preset Buttons */}
-        <div className="pt-2 border-t border-white/10 flex flex-wrap items-center gap-1.5 text-xs">
-          <span className="text-[10px] text-slate-500 uppercase mr-1">Benchmark Presets:</span>
-          <button
-            onClick={() => handleAnalyze('http://sbi-kyc-verify-portal.in')}
-            className="px-2 py-0.5 rounded bg-white/5 hover:bg-white/15 border border-white/10 text-[11px] text-slate-300 hover:text-white"
-          >
-            SBI KYC Threat (Phish)
-          </button>
-          <button
-            onClick={() => handleAnalyze('http://electricity-bill-pay-portal.online')}
-            className="px-2 py-0.5 rounded bg-white/5 hover:bg-white/15 border border-white/10 text-[11px] text-slate-300 hover:text-white"
-          >
-            Electricity Bill Cutoff (Extortion)
-          </button>
-          <button
-            onClick={() => handleAnalyze('https://onlinesbi.sbi')}
-            className="px-2 py-0.5 rounded bg-white/5 hover:bg-white/15 border border-white/10 text-[11px] text-slate-300 hover:text-white"
-          >
-            Official onlinesbi.sbi (Clean)
-          </button>
+        <div className="pt-2 border-t border-white/10 space-y-1.5 text-xs">
+          <span className="text-[10px] text-slate-500 uppercase block font-bold">Benchmark Presets:</span>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <button
+              onClick={() => handleAnalyze('http://sbi-kyc-verify-portal.in')}
+              className="px-2.5 py-1 rounded bg-white/5 hover:bg-white/15 border border-white/10 text-[11px] text-slate-300 hover:text-white active:scale-95 transition-transform"
+            >
+              SBI KYC (Phish)
+            </button>
+            <button
+              onClick={() => handleAnalyze('http://electricity-bill-pay-portal.online')}
+              className="px-2.5 py-1 rounded bg-white/5 hover:bg-white/15 border border-white/10 text-[11px] text-slate-300 hover:text-white active:scale-95 transition-transform"
+            >
+              Electricity Bill (Extortion)
+            </button>
+            <button
+              onClick={() => handleAnalyze('https://onlinesbi.sbi')}
+              className="px-2.5 py-1 rounded bg-white/5 hover:bg-white/15 border border-white/10 text-[11px] text-slate-300 hover:text-white active:scale-95 transition-transform"
+            >
+              onlinesbi.sbi (Clean)
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Forensic Results Workspace */}
       {activeResult && (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Card 1: Executive Verdict & Classification */}
-          <div className="p-5 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/10">
-              <div>
-                <span className="text-[10px] text-slate-500 uppercase tracking-wider block">
-                  INVESTIGATION AUDIT ID // {activeResult.id}
+          <div className="p-4 sm:p-5 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-3 sm:space-y-4">
+            <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-2.5 pb-3 border-b border-white/10">
+              <div className="min-w-0">
+                <span className="text-[9px] sm:text-[10px] text-slate-500 uppercase tracking-wider block">
+                  INVESTIGATION AUDIT // {activeResult.id}
                 </span>
-                <h3 className="text-sm font-bold text-white uppercase mt-0.5">
+                <h3 className="text-xs sm:text-sm font-bold text-white uppercase mt-0.5 truncate">
                   {activeResult.category}
                 </h3>
               </div>
-              <div className="flex items-center gap-3">
-                <RiskBadge level={activeResult.riskLevel} score={activeResult.riskScore} size="lg" />
+              <div className="self-start xs:self-auto flex-shrink-0">
+                <RiskBadge level={activeResult.riskLevel} score={activeResult.riskScore} size="md" />
               </div>
             </div>
 
             {/* AI Forensic Explanation */}
-            <div className="p-3.5 rounded-lg bg-white/5 border border-white/10 text-xs text-slate-200 font-sans leading-relaxed">
+            <div className="p-3 sm:p-3.5 rounded-lg bg-white/5 border border-white/10 text-xs text-slate-200 font-sans leading-relaxed">
               <strong className="font-mono text-[#FF9933] block text-[11px] uppercase pb-1">
                 Forensic Investigation Summary:
               </strong>
               {activeResult.explanation}
             </div>
 
-            {/* Core Technical Parameter Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-              <div className="p-3 rounded-lg bg-black/40 border border-white/10 space-y-0.5">
-                <span className="text-[10px] text-slate-500 block uppercase">TARGET DOMAIN</span>
+            {/* Core Technical Parameter Grid: 2 cols on mobile, 4 on desktop */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 text-xs">
+              <div className="p-2.5 sm:p-3 rounded-lg bg-black/40 border border-white/10 space-y-0.5 min-w-0">
+                <span className="text-[9px] sm:text-[10px] text-slate-500 block uppercase">TARGET DOMAIN</span>
                 <span className="text-white font-bold truncate block">{activeResult.domain}</span>
               </div>
-              <div className="p-3 rounded-lg bg-black/40 border border-white/10 space-y-0.5">
-                <span className="text-[10px] text-slate-500 block uppercase">RESOLVED IP & ASN</span>
+              <div className="p-2.5 sm:p-3 rounded-lg bg-black/40 border border-white/10 space-y-0.5 min-w-0">
+                <span className="text-[9px] sm:text-[10px] text-slate-500 block uppercase">RESOLVED ASN</span>
                 <span className="text-slate-300 truncate block">{activeResult.asn}</span>
               </div>
-              <div className="p-3 rounded-lg bg-black/40 border border-white/10 space-y-0.5">
-                <span className="text-[10px] text-slate-500 block uppercase">SHANNON ENTROPY</span>
+              <div className="p-2.5 sm:p-3 rounded-lg bg-black/40 border border-white/10 space-y-0.5 min-w-0">
+                <span className="text-[9px] sm:text-[10px] text-slate-500 block uppercase">SHANNON ENTROPY</span>
                 <span className="text-amber-400 font-bold block">{activeResult.shannonEntropy} bits</span>
               </div>
-              <div className="p-3 rounded-lg bg-black/40 border border-white/10 space-y-0.5">
-                <span className="text-[10px] text-slate-500 block uppercase">TLS VALIDITY</span>
+              <div className="p-2.5 sm:p-3 rounded-lg bg-black/40 border border-white/10 space-y-0.5 min-w-0">
+                <span className="text-[9px] sm:text-[10px] text-slate-500 block uppercase">TLS VALIDITY</span>
                 <span className="text-rose-400 font-bold block truncate">{activeResult.tlsStatus}</span>
               </div>
             </div>
           </div>
 
-          {/* Card 2: Technical Indicators & Machine Learning Correlation */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Card 2: Technical Indicators & Threat Feed Correlation */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
             {/* Syntactic & Lexical Indicators (6 cols) */}
-            <div className="lg:col-span-6 p-5 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-3">
+            <div className="lg:col-span-6 p-4 sm:p-5 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-3">
               <span className="text-xs font-bold text-white uppercase tracking-wider block flex items-center gap-1.5">
                 <Layers className="w-3.5 h-3.5 text-cyan-400" />
                 <span>URL Syntactic & Lexical Markers</span>
               </span>
 
               <div className="space-y-2 text-xs">
-                <div className="flex items-center justify-between p-2.5 rounded bg-white/5 border border-white/10">
-                  <span className="text-slate-400">Punycode / Homoglyph Encoding:</span>
+                <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-1 p-2 sm:p-2.5 rounded bg-white/5 border border-white/10">
+                  <span className="text-slate-400">Punycode / Homoglyph:</span>
                   <span className={activeResult.isPunycode ? 'text-rose-400 font-bold' : 'text-slate-300'}>
                     {activeResult.isPunycode ? 'DETECTED (Spoof Risk)' : 'Standard ASCII'}
                   </span>
                 </div>
-                <div className="flex items-center justify-between p-2.5 rounded bg-white/5 border border-white/10">
-                  <span className="text-slate-400">Raw IP Hostname Usage:</span>
+                <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-1 p-2 sm:p-2.5 rounded bg-white/5 border border-white/10">
+                  <span className="text-slate-400">Raw IP Hostname:</span>
                   <span className={activeResult.isIpHosname ? 'text-rose-400 font-bold' : 'text-slate-300'}>
-                    {activeResult.isIpHosname ? 'YES (Evasion Technique)' : 'No (FQDN Resolved)'}
+                    {activeResult.isIpHosname ? 'YES (Evasion)' : 'No (FQDN Resolved)'}
                   </span>
                 </div>
-                <div className="flex items-center justify-between p-2.5 rounded bg-white/5 border border-white/10">
-                  <span className="text-slate-400">Subdomain Hierarchy Depth:</span>
+                <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-1 p-2 sm:p-2.5 rounded bg-white/5 border border-white/10">
+                  <span className="text-slate-400">Subdomain Depth:</span>
                   <span className="text-slate-300 font-bold">{activeResult.subdomainDepth} levels</span>
                 </div>
-                <div className="flex items-center justify-between p-2.5 rounded bg-white/5 border border-white/10">
-                  <span className="text-slate-400">Redirect Chain Count:</span>
+                <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-1 p-2 sm:p-2.5 rounded bg-white/5 border border-white/10">
+                  <span className="text-slate-400">Redirect Hops:</span>
                   <span className="text-slate-300 font-bold">{activeResult.redirectCount} hops</span>
                 </div>
               </div>
             </div>
 
             {/* Threat Feed Matches (6 cols) */}
-            <div className="lg:col-span-6 p-5 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-3">
+            <div className="lg:col-span-6 p-4 sm:p-5 rounded-xl bg-black/60 border border-white/10 backdrop-blur-md space-y-3">
               <span className="text-xs font-bold text-white uppercase tracking-wider block flex items-center gap-1.5">
                 <Database className="w-3.5 h-3.5 text-indigo-400" />
-                <span>Threat Intelligence Feed Matches ({activeResult.threatMatches.length})</span>
+                <span>Threat Feed Matches ({activeResult.threatMatches.length})</span>
               </span>
 
               {activeResult.threatMatches.length > 0 ? (
@@ -393,10 +381,10 @@ export const UrlInvestigationView: React.FC<UrlInvestigationViewProps> = ({
                   {activeResult.threatMatches.map((m, i) => (
                     <div
                       key={i}
-                      className="p-2.5 rounded bg-rose-950/20 border border-rose-900/60 text-rose-300 flex items-center justify-between gap-2"
+                      className="p-2 sm:p-2.5 rounded bg-rose-950/20 border border-rose-900/60 text-rose-300 flex flex-col xs:flex-row xs:items-center justify-between gap-1 xs:gap-2"
                     >
-                      <span className="font-bold truncate">{m}</span>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-rose-950 border border-rose-800 uppercase flex-shrink-0">
+                      <span className="font-bold truncate text-[11px] sm:text-xs">{m}</span>
+                      <span className="self-start xs:self-auto text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded bg-rose-950 border border-rose-800 uppercase flex-shrink-0">
                         Listed IOC
                       </span>
                     </div>
@@ -404,7 +392,7 @@ export const UrlInvestigationView: React.FC<UrlInvestigationViewProps> = ({
                 </div>
               ) : (
                 <div className="p-4 rounded-lg bg-white/5 border border-white/10 text-xs text-slate-400 italic">
-                  Zero hostile listings cataloged across active threat feeds. Remember: Absence of a feed match does not establish safety.
+                  Zero hostile listings cataloged across active threat feeds.
                 </div>
               )}
             </div>
@@ -417,4 +405,3 @@ export const UrlInvestigationView: React.FC<UrlInvestigationViewProps> = ({
     </div>
   );
 };
-
