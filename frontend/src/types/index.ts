@@ -2,6 +2,7 @@ export type RiskLevel =
   | 'LOW_RISK'
   | 'SUSPICIOUS'
   | 'HIGH_RISK'
+  | 'CRITICAL_RISK'
   | 'CONFIRMED_MALICIOUS'
   | 'INCONCLUSIVE';
 

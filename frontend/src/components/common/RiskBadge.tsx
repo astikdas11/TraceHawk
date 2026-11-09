@@ -52,6 +52,14 @@ export const RiskBadge: React.FC<RiskBadgeProps> = ({
       dot: 'bg-orange-500',
       icon: ShieldAlert,
     },
+    CRITICAL_RISK: {
+      label: 'Critical Risk',
+      bg: 'bg-rose-950/70',
+      text: 'text-rose-400',
+      border: 'border-rose-700/70',
+      dot: 'bg-rose-500',
+      icon: ShieldAlert,
+    },
     CONFIRMED_MALICIOUS: {
       label: 'Confirmed Malicious',
       bg: 'bg-rose-950/70',

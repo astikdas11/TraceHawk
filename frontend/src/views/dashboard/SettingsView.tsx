@@ -11,6 +11,7 @@ import {
   Monitor
 } from 'lucide-react';
 import { DemoBanner } from '../../components/common/DemoBanner';
+import { API_BASE_URL } from '../../services/api';
 
 interface SettingsViewProps {
   flagAnimationEnabled?: boolean;
@@ -21,7 +22,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   flagAnimationEnabled = true,
   onToggleFlagAnimation
 }) => {
-  const [apiUrl, setApiUrl] = useState<string>('http://127.0.0.1:8000');
+  const [apiUrl, setApiUrl] = useState<string>(API_BASE_URL);
   const [testingConnection, setTestingConnection] = useState<boolean>(false);
   const [connectionStatus, setConnectionStatus] = useState<'idle' | 'connected' | 'disconnected'>('idle');
   const [statusMessage, setStatusMessage] = useState<string>('');
@@ -32,6 +33,13 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   const [savedSuccess, setSavedSuccess] = useState<boolean>(false);
 
   const handleTestConnection = async () => {
+    const cleanApiUrl = apiUrl.trim().replace(/\/+$/, '');
+    if (!cleanApiUrl) {
+      setConnectionStatus('disconnected');
+      setStatusMessage('Please enter a valid backend API URL before testing connectivity.');
+      return;
+    }
+
     setTestingConnection(true);
     setConnectionStatus('idle');
     setStatusMessage('Pinging backend endpoint...');
@@ -40,7 +48,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 2000);
 
-      const res = await fetch(`${apiUrl}/api/health`, {
+      const res = await fetch(`${cleanApiUrl}/api/health`, {
         method: 'GET',
         signal: controller.signal
       });
@@ -118,7 +126,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 type="text"
                 value={apiUrl}
                 onChange={(e) => setApiUrl(e.target.value)}
-                placeholder="http://127.0.0.1:8000"
+                placeholder={API_BASE_URL}
                 className="flex-1 px-3 py-2.5 sm:py-2 rounded-lg bg-white/5 border border-white/15 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#FF9933]"
               />
               <button

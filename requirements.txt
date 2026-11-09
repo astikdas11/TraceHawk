@@ -1,0 +1,32 @@
+# ==============================================================================
+# TRACEHAWK Production & Development Dependencies
+# Python 3.11+ / 3.14 Compatible
+# ==============================================================================
+
+# Backend API Framework
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+pydantic>=2.9.0
+pydantic-settings>=2.4.0
+httpx>=0.27.0
+
+# Data Engineering & Machine Learning Inference
+numpy>=1.26.0
+pandas>=2.2.0
+scikit-learn>=1.5.0
+scipy>=1.13.0
+joblib>=1.4.0
+xgboost>=2.1.0
+
+# Network, DNS & Security Intelligence
+dnspython>=2.6.1
+cryptography>=45.0.0
+tldextract>=5.1.0
+certifi>=2024.7.4
+idna>=3.7
+
+# Testing & Quality Assurance
+pytest>=8.3.0
+pytest-asyncio>=0.24.0
+ruff>=0.5.0
+

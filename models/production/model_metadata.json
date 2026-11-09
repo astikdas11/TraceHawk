@@ -1,0 +1,233 @@
+{
+  "model_version": "v1.0-production-release",
+  "training_timestamp": "2026-11-07T22:11:29Z",
+  "dataset_fingerprint": {
+    "name": "PhiUSIIL Phishing URL Dataset",
+    "raw_dataset_path": "data/raw/PhiUSIIL_Phishing_URL_Dataset.csv",
+    "clean_record_count": 235370,
+    "train_record_count": 188296,
+    "validation_record_count": 23537,
+    "test_record_count": 23537,
+    "splits_mapping_csv": "data/splits/domain_group_splits.csv"
+  },
+  "canonical_labels": {
+    "0": "BENIGN",
+    "1": "MALICIOUS"
+  },
+  "models": {
+    "url_only_candidate": {
+      "artifact_filename": "url_only_model.joblib",
+      "estimator_class": "xgboost.sklearn.XGBClassifier",
+      "xgboost_version": "3.4.1",
+      "scikit_learn_version": "1.9.1",
+      "tree_method": "hist",
+      "model_parameters": {
+        "max_depth": 6,
+        "n_estimators": 150,
+        "learning_rate": 0.1,
+        "eval_metric": "logloss",
+        "tree_method": "hist",
+        "random_state": 42
+      },
+      "feature_count": 19,
+      "feature_names_and_order": [
+        "URLLength",
+        "DomainLength",
+        "IsDomainIP",
+        "TLD",
+        "TLDLength",
+        "NoOfSubDomain",
+        "HasObfuscation",
+        "NoOfObfuscatedChar",
+        "ObfuscationRatio",
+        "NoOfLettersInURL",
+        "LetterRatioInURL",
+        "NoOfDegitsInURL",
+        "DegitRatioInURL",
+        "NoOfEqualsInURL",
+        "NoOfQMarkInURL",
+        "NoOfAmpersandInURL",
+        "NoOfOtherSpecialCharsInURL",
+        "SpacialCharRatioInURL",
+        "IsHTTPS"
+      ],
+      "tier": "Tier 1: Low-Latency Offline URL Scanner (<5ms)",
+      "locked_operating_threshold": {
+        "standard_threshold": 0.5,
+        "security_hardened_threshold": 0.4,
+        "selection_rationale": "Evaluated on 23,537 validation records. Selection Strategy: Maximize precision subject to the validation FNR constraint of 0.5% or lower."
+      },
+      "validation_metrics": {
+        "threshold": 0.5,
+        "accuracy": 0.99749,
+        "precision": 0.9997,
+        "recall": 0.9944,
+        "f1_score": 0.99704,
+        "roc_auc": 0.99987,
+        "pr_auc": 0.99985,
+        "confusion_matrix": {
+          "tn": 13529,
+          "fp": 3,
+          "fn": 56,
+          "tp": 9949
+        },
+        "false_positive_rate": 0.00022,
+        "false_negative_rate": 0.0056,
+        "brier_score": 0.002
+      },
+      "final_test_metrics": {
+        "threshold": 0.5,
+        "accuracy": 0.99715,
+        "precision": 0.9995,
+        "recall": 0.99381,
+        "f1_score": 0.99665,
+        "roc_auc": 0.99974,
+        "pr_auc": 0.99975,
+        "confusion_matrix": {
+          "tn": 13517,
+          "fp": 5,
+          "fn": 62,
+          "tp": 9953
+        },
+        "false_positive_rate": 0.00037,
+        "false_negative_rate": 0.00619,
+        "brier_score": 0.00254
+      },
+      "training_artifact_sha256": "c592a0f9f2ed600805ab7154415b66facccddc5508a275036c5823935151e89e",
+      "production_artifact_sha256": "c592a0f9f2ed600805ab7154415b66facccddc5508a275036c5823935151e89e",
+      "provenance_byte_identical": true,
+      "latency_benchmark": {
+        "single_sample_median_latency_ms": 4.358,
+        "single_sample_p95_latency_ms": 5.4004,
+        "single_sample_p99_latency_ms": 6.0424,
+        "batch_1000_latency_ms": 5.75,
+        "batch_throughput_samples_per_sec": 174050.3
+      }
+    },
+    "full_webpage_candidate": {
+      "artifact_filename": "full_webpage_model.joblib",
+      "estimator_class": "xgboost.sklearn.XGBClassifier",
+      "xgboost_version": "3.4.1",
+      "scikit_learn_version": "1.9.1",
+      "tree_method": "hist",
+      "model_parameters": {
+        "max_depth": 6,
+        "n_estimators": 150,
+        "learning_rate": 0.1,
+        "eval_metric": "logloss",
+        "tree_method": "hist",
+        "random_state": 42
+      },
+      "feature_count": 47,
+      "feature_names_and_order": [
+        "URLLength",
+        "DomainLength",
+        "IsDomainIP",
+        "TLD",
+        "TLDLength",
+        "NoOfSubDomain",
+        "HasObfuscation",
+        "NoOfObfuscatedChar",
+        "ObfuscationRatio",
+        "NoOfLettersInURL",
+        "LetterRatioInURL",
+        "NoOfDegitsInURL",
+        "DegitRatioInURL",
+        "NoOfEqualsInURL",
+        "NoOfQMarkInURL",
+        "NoOfAmpersandInURL",
+        "NoOfOtherSpecialCharsInURL",
+        "SpacialCharRatioInURL",
+        "IsHTTPS",
+        "LineOfCode",
+        "LargestLineLength",
+        "HasTitle",
+        "DomainTitleMatchScore",
+        "URLTitleMatchScore",
+        "HasFavicon",
+        "Robots",
+        "IsResponsive",
+        "NoOfURLRedirect",
+        "NoOfSelfRedirect",
+        "HasDescription",
+        "NoOfPopup",
+        "NoOfiFrame",
+        "HasExternalFormSubmit",
+        "HasSocialNet",
+        "HasSubmitButton",
+        "HasHiddenFields",
+        "HasPasswordField",
+        "Bank",
+        "Pay",
+        "Crypto",
+        "HasCopyrightInfo",
+        "NoOfImage",
+        "NoOfCSS",
+        "NoOfJS",
+        "NoOfSelfRef",
+        "NoOfEmptyRef",
+        "NoOfExternalRef"
+      ],
+      "tier": "Tier 2: Deep DOM & Content Inspection Scanner",
+      "locked_operating_threshold": {
+        "standard_threshold": 0.5,
+        "security_hardened_threshold": 0.15,
+        "selection_rationale": "Evaluated on 23,537 validation records. Selection Strategy: Maximize precision subject to the validation FNR constraint of 0.5% or lower."
+      },
+      "validation_metrics": {
+        "threshold": 0.5,
+        "accuracy": 0.99979,
+        "precision": 0.9999,
+        "recall": 0.9996,
+        "f1_score": 0.99975,
+        "roc_auc": 1.0,
+        "pr_auc": 1.0,
+        "confusion_matrix": {
+          "tn": 13531,
+          "fp": 1,
+          "fn": 4,
+          "tp": 10001
+        },
+        "false_positive_rate": 7e-05,
+        "false_negative_rate": 0.0004,
+        "brier_score": 0.00019
+      },
+      "final_test_metrics": {
+        "threshold": 0.5,
+        "accuracy": 0.99996,
+        "precision": 1.0,
+        "recall": 0.9999,
+        "f1_score": 0.99995,
+        "roc_auc": 1.0,
+        "pr_auc": 1.0,
+        "confusion_matrix": {
+          "tn": 13522,
+          "fp": 0,
+          "fn": 1,
+          "tp": 10014
+        },
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0001,
+        "brier_score": 6e-05
+      },
+      "training_artifact_sha256": "c9d6bc32eaf1c84a2a98b8cb2b9f0990a55e92a82c9e8acc2490f285a02ffb5a",
+      "production_artifact_sha256": "c9d6bc32eaf1c84a2a98b8cb2b9f0990a55e92a82c9e8acc2490f285a02ffb5a",
+      "provenance_byte_identical": true,
+      "latency_benchmark": {
+        "single_sample_median_latency_ms": 4.6819,
+        "single_sample_p95_latency_ms": 6.0904,
+        "single_sample_p99_latency_ms": 7.6133,
+        "batch_1000_latency_ms": 6.29,
+        "batch_throughput_samples_per_sec": 158936.1
+      }
+    }
+  },
+  "dependency_versions": {
+    "python": "3.14.6",
+    "xgboost": "3.4.1",
+    "scikit-learn": "1.9.1",
+    "joblib": "1.4.2",
+    "pandas": "3.1.1",
+    "pyarrow": "26.0.1"
+  }
+}

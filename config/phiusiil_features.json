@@ -1,0 +1,98 @@
+{
+  "dataset_metadata": {
+    "name": "PhiUSIIL Phishing URL Dataset",
+    "description": "Comprehensive benchmark dataset of legitimate and phishing URLs with lexical, DOM, and network indicators.",
+    "raw_filename": "PhiUSIIL_Phishing_URL_Dataset.csv",
+    "raw_record_count": 235795,
+    "deduplicated_record_count": 235370,
+    "raw_label_mapping": {
+      "1": "Legitimate (Benign)",
+      "0": "Phishing (Malicious)"
+    },
+    "canonical_label_mapping": {
+      "0": "BENIGN",
+      "1": "MALICIOUS"
+    },
+    "target_column": "label"
+  },
+  "columns": {
+    "dropped_identifiers": [
+      "FILENAME"
+    ],
+    "preserved_metadata": [
+      "url_normalized",
+      "Domain",
+      "registrable_domain",
+      "Title",
+      "split"
+    ],
+    "feature_set_A_url_only": [
+      "URLLength",
+      "DomainLength",
+      "IsDomainIP",
+      "TLD",
+      "TLDLength",
+      "NoOfSubDomain",
+      "HasObfuscation",
+      "NoOfObfuscatedChar",
+      "ObfuscationRatio",
+      "NoOfLettersInURL",
+      "LetterRatioInURL",
+      "NoOfDegitsInURL",
+      "DegitRatioInURL",
+      "NoOfEqualsInURL",
+      "NoOfQMarkInURL",
+      "NoOfAmpersandInURL",
+      "NoOfOtherSpecialCharsInURL",
+      "SpacialCharRatioInURL",
+      "IsHTTPS"
+    ],
+    "feature_set_B_webpage_derived": [
+      "LineOfCode",
+      "LargestLineLength",
+      "HasTitle",
+      "DomainTitleMatchScore",
+      "URLTitleMatchScore",
+      "HasFavicon",
+      "Robots",
+      "IsResponsive",
+      "NoOfURLRedirect",
+      "NoOfSelfRedirect",
+      "HasDescription",
+      "NoOfPopup",
+      "NoOfiFrame",
+      "HasExternalFormSubmit",
+      "HasSocialNet",
+      "HasSubmitButton",
+      "HasHiddenFields",
+      "HasPasswordField",
+      "Bank",
+      "Pay",
+      "Crypto",
+      "HasCopyrightInfo",
+      "NoOfImage",
+      "NoOfCSS",
+      "NoOfJS",
+      "NoOfSelfRef",
+      "NoOfEmptyRef",
+      "NoOfExternalRef"
+    ],
+    "feature_set_C_research_ablation": [
+      "URLSimilarityIndex",
+      "CharContinuationRate",
+      "TLDLegitimateProb",
+      "URLCharProb"
+    ]
+  },
+  "splitting_strategy": {
+    "method": "DomainGroupStratifiedSplit",
+    "group_column": "registrable_domain",
+    "target_column": "label",
+    "ratios": {
+      "train": 0.8,
+      "val": 0.1,
+      "test": 0.1
+    },
+    "random_state": 42
+  }
+}

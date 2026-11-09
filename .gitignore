@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Secrets, Environment & Credentials
+.env
+.env.*
+*.pem
+*.key
+*.crt
+*.pfx
+*.p12
+*.secret
+*.token
+credentials.json
+
+# Packaging Archives
+*.zip
+*.tar.gz
+*.tgz
+*.rar
+
+# Node / Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Data artifacts
+data/raw/*.csv
+data/processed/*.parquet
+data/splits/*.parquet
+data/splits/*.csv
+
+# OS and Editor
+.DS_Store
+Thumbs.db
+*.swp
+*.bak
+.idea/
+
