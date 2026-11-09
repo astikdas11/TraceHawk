@@ -1,0 +1,315 @@
+name: TRACEHAWK Linux Verification
+
+on:
+  push:
+    branches:
+      - verify/phase-5-2.5.4
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backend-verification:
+    name: Backend Linux Compatibility & ML Parity
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.14.6
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14.6'
+
+      - name: Record Environment Information
+        run: |
+          echo "=== Linux Host Information ==="
+          uname -a
+          lsb_release -a || cat /etc/os-release
+          echo "=== Python Runtime ==="
+          python --version
+          pip --version
+
+      - name: Verify Model & Config Cryptographic Hashes
+        run: |
+          echo "=== Cryptographic SHA-256 Hash Verification ==="
+          echo "c592a0f9f2ed600805ab7154415b66facccddc5508a275036c5823935151e89e  models/production/url_only_model.joblib" | sha256sum -c -
+          echo "c9d6bc32eaf1c84a2a98b8cb2b9f0990a55e92a82c9e8acc2490f285a02ffb5a  models/production/full_webpage_model.joblib" | sha256sum -c -
+          echo "7850f32bb31af4ba41aadcf2f0333f4a88dc1264b63bede513df97d1463d94f8  models/production/model_metadata.json" | sha256sum -c -
+          echo "d27e7adf2fc74142e2a169b99543991b1f38302c6feadf8c480ee9359df57e2b  config/phiusiil_features.json" | sha256sum -c -
+
+      - name: Install Production & ML Dependencies
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install --upgrade pip setuptools wheel
+          pip install -r requirements.txt
+
+      - name: Inspect Installed Package Versions & Wheel Origins
+        run: |
+          source .venv/bin/activate
+          python - << 'EOF'
+          import sys, json
+          import sklearn, xgboost, joblib, pandas, numpy, scipy, fastapi, uvicorn, pydantic, cryptography
+
+          print("=== Actual Installed Package Versions (Linux) ===")
+          installed = {
+              "python": sys.version.split()[0],
+              "xgboost": xgboost.__version__,
+              "scikit-learn": sklearn.__version__,
+              "joblib": joblib.__version__,
+              "pandas": pandas.__version__,
+              "numpy": numpy.__version__,
+              "scipy": scipy.__version__,
+              "fastapi": fastapi.__version__,
+              "uvicorn": uvicorn.__version__,
+              "pydantic": pydantic.__version__,
+              "cryptography": cryptography.__version__,
+          }
+          for k, v in installed.items():
+              print(f"  {k}: {v}")
+
+          with open("models/production/model_metadata.json") as f:
+              meta = json.load(f)
+          provenance = meta.get("dependency_versions", {})
+          print("\n=== Provenance Comparison ===")
+          for k, prov_ver in provenance.items():
+              inst_ver = installed.get(k, "NOT_INSTALLED")
+              match = (inst_ver == prov_ver)
+              print(f"  {k}: provenance={prov_ver} | installed={inst_ver} | exact_match={match}")
+          EOF
+
+      - name: Verify Feature Schema and Metadata Consistency
+        run: |
+          source .venv/bin/activate
+          python - << 'EOF'
+          import json
+
+          with open("models/production/model_metadata.json") as f:
+              meta = json.load(f)
+          with open("config/phiusiil_features.json") as f:
+              schema = json.load(f)
+
+          t1_meta = meta["models"]["url_only_candidate"]["feature_names_and_order"]
+          t2_meta = meta["models"]["full_webpage_candidate"]["feature_names_and_order"]
+
+          t1_schema = schema["columns"]["feature_set_A_url_only"]
+          t2_schema = schema["columns"]["feature_set_A_url_only"] + schema["columns"]["feature_set_B_webpage_derived"]
+
+          assert len(t1_meta) == 19, f"Expected 19 Tier 1 features, got {len(t1_meta)}"
+          assert len(t2_meta) == 47, f"Expected 47 Tier 2 features, got {len(t2_meta)}"
+          assert t1_meta == t1_schema, f"Tier 1 metadata features do not match schema"
+          assert t2_meta == t2_schema, f"Tier 2 metadata features do not match schema"
+
+          print("Feature Schema & Metadata Alignment: PASSED")
+          print(f"  Tier 1 feature count: {len(t1_meta)} (exact match with schema)")
+          print(f"  Tier 2 feature count: {len(t2_meta)} (exact match with schema)")
+          EOF
+
+      - name: Verify Model Loading & Pipeline Steps
+        run: |
+          source .venv/bin/activate
+          python - << 'EOF'
+          import joblib
+          import numpy as np
+          from sklearn.pipeline import Pipeline
+          from xgboost.sklearn import XGBClassifier
+          from sklearn.compose import ColumnTransformer
+
+          m1 = joblib.load("models/production/url_only_model.joblib")
+          m2 = joblib.load("models/production/full_webpage_model.joblib")
+
+          assert isinstance(m1, Pipeline), f"m1 is not Pipeline: {type(m1)}"
+          assert isinstance(m2, Pipeline), f"m2 is not Pipeline: {type(m2)}"
+
+          assert "preprocessor" in m1.named_steps
+          assert "clf" in m1.named_steps
+          assert "preprocessor" in m2.named_steps
+          assert "clf" in m2.named_steps
+
+          assert np.array_equal(m1.classes_, [0, 1]), f"m1 classes invalid: {m1.classes_}"
+          assert np.array_equal(m2.classes_, [0, 1]), f"m2 classes invalid: {m2.classes_}"
+
+          print("Model Deserialization & Pipeline Integrity: PASSED")
+          print(f"  m1 type: {type(m1)} | classes: {m1.classes_}")
+          print(f"  m2 type: {type(m2)} | classes: {m2.classes_}")
+          EOF
+
+      - name: Verify Cross-Platform Prediction Parity
+        run: |
+          source .venv/bin/activate
+          python - << 'EOF'
+          import json
+          import joblib
+          import numpy as np
+          import pandas as pd
+          from backend.app.utils.feature_extractor import extract_url_only_features
+
+          m1 = joblib.load("models/production/url_only_model.joblib")
+          m2 = joblib.load("models/production/full_webpage_model.joblib")
+
+          with open("models/production/model_metadata.json") as f:
+              meta = json.load(f)
+
+          t1_names = meta["models"]["url_only_candidate"]["feature_names_and_order"]
+          t2_names = meta["models"]["full_webpage_candidate"]["feature_names_and_order"]
+
+          # Fixed Reference Input 1: Tier 1 URL
+          ref_url = "https://secure-portal.example.com/login?session=active"
+          t1_feat = extract_url_only_features(ref_url)
+
+          # Verify keys match exact schema
+          assert set(t1_feat.keys()) == set(t1_names), "Tier 1 extracted keys mismatch"
+          t1_df = pd.DataFrame([t1_feat], columns=t1_names)
+
+          # Predict Tier 1
+          p1 = m1.predict_proba(t1_df)[0]
+          print(f"Tier 1 Actual Linux Probabilities:   [{p1[0]:.16f}, {p1[1]:.16f}]")
+
+          # Tier 1 expected vector from approved Windows benchmark
+          expected_p1 = np.array([0.0000134706497192, 0.9999865293502808])
+          print(f"Tier 1 Expected Windows Benchmark:   [{expected_p1[0]:.16f}, {expected_p1[1]:.16f}]")
+
+          assert len(p1) == 2, f"Tier 1 probability vector length is {len(p1)}, expected 2"
+          assert np.all(np.isfinite(p1)), "Tier 1 probabilities contain non-finite values"
+          assert np.isclose(np.sum(p1), 1.0, atol=1e-5), f"Tier 1 probabilities sum to {np.sum(p1)}"
+
+          np.testing.assert_allclose(
+              p1,
+              expected_p1,
+              rtol=0,
+              atol=1e-5,
+              err_msg="Tier 1 prediction parity failed tolerance atol=1e-5"
+          )
+          print("Tier 1 Prediction Parity: PASSED (atol <= 1e-5)")
+
+          # Fixed Reference Input 2: Tier 2 Record
+          t2_record = {
+              **t1_feat,
+              "LineOfCode": 350,
+              "LargestLineLength": 180,
+              "HasTitle": 1,
+              "DomainTitleMatchScore": 100.0,
+              "URLTitleMatchScore": 75.0,
+              "HasFavicon": 1,
+              "Robots": 1,
+              "IsResponsive": 1,
+              "NoOfURLRedirect": 0,
+              "NoOfSelfRedirect": 0,
+              "HasDescription": 1,
+              "NoOfPopup": 0,
+              "NoOfiFrame": 1,
+              "HasExternalFormSubmit": 0,
+              "HasSocialNet": 1,
+              "HasSubmitButton": 1,
+              "HasHiddenFields": 0,
+              "HasPasswordField": 1,
+              "Bank": 0,
+              "Pay": 0,
+              "Crypto": 0,
+              "HasCopyrightInfo": 1,
+              "NoOfImage": 8,
+              "NoOfCSS": 3,
+              "NoOfJS": 6,
+              "NoOfSelfRef": 14,
+              "NoOfEmptyRef": 0,
+              "NoOfExternalRef": 2,
+          }
+
+          assert set(t2_record.keys()) == set(t2_names), "Tier 2 input keys mismatch"
+          t2_df = pd.DataFrame([t2_record], columns=t2_names)
+
+          # Predict Tier 2
+          p2 = m2.predict_proba(t2_df)[0]
+          print(f"\nTier 2 Actual Linux Probabilities:   [{p2[0]:.16f}, {p2[1]:.16f}]")
+
+          # Tier 2 expected vector from approved Windows benchmark
+          expected_p2 = np.array([0.3778966069221497, 0.6221033930778503])
+          print(f"Tier 2 Expected Windows Benchmark:   [{expected_p2[0]:.16f}, {expected_p2[1]:.16f}]")
+
+          assert len(p2) == 2, f"Tier 2 probability vector length is {len(p2)}, expected 2"
+          assert np.all(np.isfinite(p2)), "Tier 2 probabilities contain non-finite values"
+          assert np.isclose(np.sum(p2), 1.0, atol=1e-5), f"Tier 2 probabilities sum to {np.sum(p2)}"
+
+          np.testing.assert_allclose(
+              p2,
+              expected_p2,
+              rtol=0,
+              atol=1e-5,
+              err_msg="Tier 2 prediction parity failed tolerance atol=1e-5"
+          )
+          print("Tier 2 Prediction Parity: PASSED (atol <= 1e-5)")
+          EOF
+
+      - name: Verify Backend Application & API Route Table
+        run: |
+          source .venv/bin/activate
+          python - << 'EOF'
+          from backend.app.main import app
+
+          # Inspect registered routes
+          paths = set(app.openapi()["paths"].keys())
+          print("Registered FastAPI Routes:")
+          for p in sorted(paths):
+              print(f"  {p}")
+
+          expected_routes = {
+              "/api/health",
+              "/api/ready",
+              "/api/v1/investigate/url",
+              "/api/v1/investigate/domain",
+              "/api/v1/intelligence/domain",
+              "/api/v1/intelligence/tls",
+          }
+
+          for r in expected_routes:
+              assert r in paths, f"Expected route {r} not found in app routes"
+
+          # Verify Phase 4.4 message endpoint is strictly NOT registered
+          assert "/api/v1/investigate/message" not in paths, "Postponed message investigation route unexpectedly found!"
+
+          print("\nAPI Route Verification: PASSED")
+          print(f"  All {len(expected_routes)} production routes verified.")
+          print("  Postponed Phase 4.4 endpoint strictly absent.")
+          EOF
+
+  frontend-verification:
+    name: Frontend Linux Production Build
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Record Environment Information
+        run: |
+          echo "=== Linux Host Information ==="
+          uname -a
+          echo "=== Node & npm Runtimes ==="
+          node -v
+          npm -v
+          test -f package-lock.json && echo "package-lock.json verified present"
+
+      - name: Install Frontend Dependencies (npm ci)
+        run: npm ci
+
+      - name: TypeScript Typecheck (tsc -b)
+        run: npx tsc -b
+
+      - name: Vite Production Build
+        run: npm run build
+
+      - name: Verify Build Artifacts
+        run: |
+          test -f dist/index.html && echo "dist/index.html verified"
+          ls -lh dist/
+          ls -lh dist/assets/
+          echo "Frontend Clean Production Build: PASSED"
